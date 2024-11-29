@@ -2,6 +2,7 @@ package com.team1.caseStudy.team1.service;
 
 import com.team1.caseStudy.team1.entity.Employee;
 import com.team1.caseStudy.team1.repository.EmployeeRepository;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,8 +17,8 @@ import java.util.Optional;
 
 @Service
 @Log4j2
+@AllArgsConstructor
 public class EmployeeService {
-    @Autowired
     private EmployeeRepository employeeRepository;
 
     public void loadFromFile(String filePath) throws IOException {

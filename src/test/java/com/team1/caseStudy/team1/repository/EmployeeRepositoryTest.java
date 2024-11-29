@@ -18,7 +18,6 @@ public class EmployeeRepositoryTest {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    // CREATE: Test saving an employee
     @Test
     void testSaveEmployee() {
         // Arrange
@@ -32,7 +31,6 @@ public class EmployeeRepositoryTest {
         assertEquals("Aryan@yahoo.com", savedEmployee.getEmail());
     }
 
-    // READ: Test finding an employee by email (existing email)
     @Test
     void testFindByEmail_WhenEmailExists() {
         // Arrange
@@ -46,7 +44,6 @@ public class EmployeeRepositoryTest {
         assertEquals("Lionel.Ronaldo@yahoo.com", result.get().getEmail());
     }
 
-    // READ: Test finding an employee by email (non-existing email)
     @Test
     void testFindByEmail_WhenEmailDoesNotExist() {
         // Arrange
@@ -60,7 +57,6 @@ public class EmployeeRepositoryTest {
         assertFalse(result.isPresent());
     }
 
-    // READ: Test finding all employees
     @Test
     void testFindAllEmployees() {
         // Arrange
@@ -73,17 +69,16 @@ public class EmployeeRepositoryTest {
         Iterable<Employee> result = employeeRepository.findAll();
 
         // Assert
-        assertTrue(result.iterator().hasNext()); // Ensure there are employees in the repository
+        assertTrue(result.iterator().hasNext());
     }
 
-    // UPDATE: Test updating an employee's details
     @Test
     void testUpdateEmployee() {
         // Arrange
         Employee employee = new Employee(1,"Charlie", "charlie@yahoo.com");
         employeeRepository.save(employee);
 
-        // Act - Update employee's name and email
+        // Act
         employee.setName("Charles");
         employee.setEmail("charles@yahoo.com");
         Employee updatedEmployee = employeeRepository.save(employee);

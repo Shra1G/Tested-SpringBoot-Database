@@ -1,19 +1,23 @@
 package com.team1.caseStudy.team1.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
+@Log4j2
+@AllArgsConstructor
+@ConfigurationProperties(prefix = "import")
 public class ImportService implements CommandLineRunner {
 
-    @Autowired
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
+    private final ImportProperties importProperties;
 
     @Override
     public void run(String... args) throws Exception {
-        String filePath = "src/main/resources/employees.csv";
-        employeeService.loadFromFile(filePath);
-        System.out.println("Data loaded from " + filePath);
+        employeeService.loadFromFile(importProperties.getFilepath());
+        log.info("Data loaded from {}", importProperties.getFilepath());
     }
 }

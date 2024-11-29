@@ -10,14 +10,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -158,4 +162,129 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath("$.name").value("Lionel"))
                 .andExpect(jsonPath("$.email").value("Lionel.Ronaldo@gmail.com"));
     }
+
+    @Test
+    void testGetEmployeeById_Success() {
+        Employee employee = new Employee(1, "Ram Laxman", "Ram.Laxman@example.com");
+
+        Mockito.when(employeeService.getEmployeeById(1)).thenReturn(Optional.of(employee));
+
+        ResponseEntity<Employee> response = employeeController.getEmployeeById(1);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(employee, response.getBody());
+    }
+
+    @Test
+    void testGetEmployeeById_NotFound() {
+        Mockito.when(employeeService.getEmployeeById(1)).thenReturn(Optional.empty());
+
+        ResponseEntity<Employee> response = employeeController.getEmployeeById(1);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void testGetEmployeeById_BadRequest() {
+        Mockito.doThrow(new IllegalArgumentException("Invalid ID"))
+                .when(employeeService).getEmployeeById(1);
+
+        ResponseEntity<Employee> response = employeeController.getEmployeeById(1);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void testGetEmployeeById_InternalServerError() {
+        Mockito.doThrow(new RuntimeException("Unexpected error"))
+                .when(employeeService).getEmployeeById(1);
+
+        ResponseEntity<Employee> response = employeeController.getEmployeeById(1);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
+    void testGetEmployeeByEmail_Success() {
+        Employee existingEmployee = new Employee(1, "Ram Laxman", "Ram.Laxman@example.com");
+
+        Mockito.when(employeeService.getEmployeeByEmail("Ram.Laxman@example.com")).thenReturn(Optional.of(existingEmployee));
+
+        ResponseEntity<Employee> response = employeeController.getEmployeeByEmail("Ram.Laxman@example.com");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Ram.Laxman@example.com", response.getBody().getEmail());
+    }
+
+    @Test
+    void testGetEmployeeByEmail_NotFound() {
+        Mockito.when(employeeService.getEmployeeByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
+
+        ResponseEntity<Employee> response = employeeController.getEmployeeByEmail("nonexistent@example.com");
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void testGetEmployeeByEmail_BadRequest() {
+        Mockito.when(employeeService.getEmployeeByEmail("invalidemail")).thenThrow(new IllegalArgumentException("Invalid email"));
+
+        ResponseEntity<Employee> response = employeeController.getEmployeeByEmail("invalidemail");
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void testGetEmployeeByEmail_InternalServerError() {
+        Mockito.when(employeeService.getEmployeeByEmail("error@example.com")).thenThrow(new RuntimeException("Unexpected error"));
+
+        ResponseEntity<Employee> response = employeeController.getEmployeeByEmail("error@example.com");
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
+    void testUpdateEmployee_Success() {
+        Employee existingEmployee = new Employee(1, "John Doe", "john.doe@example.com");
+        Employee updatedEmployee = new Employee(1, "Jane Doe", "jane.doe@example.com");
+
+        Mockito.when(employeeService.getEmployeeById(1)).thenReturn(Optional.of(existingEmployee));
+        Mockito.when(employeeService.saveEmployee(existingEmployee)).thenReturn(updatedEmployee);
+
+        ResponseEntity<Employee> response = employeeController.updateEmployee(1, updatedEmployee);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Jane Doe", response.getBody().getName());
+        assertEquals("jane.doe@example.com", response.getBody().getEmail());
+    }
+
+    @Test
+    void testUpdateEmployee_NotFound() {
+        Mockito.when(employeeService.getEmployeeById(1)).thenReturn(Optional.empty());
+
+        ResponseEntity<Employee> response = employeeController.updateEmployee(1, new Employee());
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void testUpdateEmployee_BadRequest() {
+        Mockito.doThrow(new IllegalArgumentException("Invalid input"))
+                .when(employeeService).getEmployeeById(1);
+
+        ResponseEntity<Employee> response = employeeController.updateEmployee(1, new Employee());
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void testUpdateEmployee_InternalServerError() {
+        Mockito.doThrow(new RuntimeException("Unexpected error"))
+                .when(employeeService).getEmployeeById(1);
+
+        ResponseEntity<Employee> response = employeeController.updateEmployee(1, new Employee());
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
 }

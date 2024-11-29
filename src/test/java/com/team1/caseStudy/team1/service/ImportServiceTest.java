@@ -1,36 +1,47 @@
 package com.team1.caseStudy.team1.service;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class ImportServiceTest {
 
     @Mock
     private EmployeeService employeeService;
 
+    @Mock
+    private ImportProperties importProperties;
+
     @InjectMocks
     private ImportService importService;
 
-    public ImportServiceTest() {
-        MockitoAnnotations.openMocks(this); // Initialize mocks
+    @Test
+    void testRun_Success() throws Exception {
+        String testFilePath = "data/test-employees.csv";
+        when(importProperties.getFilepath()).thenReturn(testFilePath);
+
+        importService.run();
+
+        verify(employeeService, times(1)).loadFromFile(testFilePath);
     }
 
     @Test
-    void testRunLoadsDataSuccessfully() throws Exception {
-        // Arrange
-        String expectedFilePath = "src/main/resources/employees.csv";
+    void testRun_Exception() throws Exception {
+        String testFilePath = "data/test-employees.csv";
+        when(importProperties.getFilepath()).thenReturn(testFilePath);
 
-        // Act
-        importService.run();
+        doThrow(new RuntimeException("File not found")).when(employeeService).loadFromFile(testFilePath);
 
-        // Assert
-        verify(employeeService).loadFromFile(expectedFilePath); // Ensure loadFromFile is called with the correct argument
-        System.out.println("Data loaded from " + expectedFilePath); // Verify log output if required
+        Exception exception = assertThrows(RuntimeException.class, () -> importService.run());
+        Assertions.assertEquals("File not found", exception.getMessage());
+
+        verify(employeeService, times(1)).loadFromFile(testFilePath);
     }
 }

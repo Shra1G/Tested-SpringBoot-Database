@@ -4,86 +4,99 @@ import com.team1.caseStudy.team1.entity.Employee;
 import com.team1.caseStudy.team1.repository.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.MockitoAnnotations;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class EmployeeServiceTest {
-
-    @InjectMocks
-    private EmployeeService employeeService;
 
     @Mock
     private EmployeeRepository employeeRepository;
 
-    @Mock
+    @InjectMocks
+    private EmployeeService employeeService;
+
     private Employee employee;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-
-        // Mock Employee
         employee = new Employee();
         employee.setId(1);
         employee.setName("John Doe");
-        employee.setEmail("john.doe@gmail.com");
+        employee.setEmail("john.doe@example.com");
     }
 
     @Test
     void testSaveEmployee() {
-        when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
+        when(employeeRepository.save(employee)).thenReturn(employee);
 
         Employee savedEmployee = employeeService.saveEmployee(employee);
 
         assertNotNull(savedEmployee);
-        assertEquals("John Doe", savedEmployee.getName());
-        assertEquals("john.doe@gmail.com", savedEmployee.getEmail());
+        assertEquals(employee.getId(), savedEmployee.getId());
+        assertEquals(employee.getName(), savedEmployee.getName());
+        assertEquals(employee.getEmail(), savedEmployee.getEmail());
         verify(employeeRepository, times(1)).save(employee);
     }
 
     @Test
-    void testGetEmployeeById() {
+    void testGetEmployeeById_Success() {
         when(employeeRepository.findById(1)).thenReturn(Optional.of(employee));
 
         Optional<Employee> foundEmployee = employeeService.getEmployeeById(1);
 
         assertTrue(foundEmployee.isPresent());
-        assertEquals("John Doe", foundEmployee.get().getName());
+        assertEquals(employee.getId(), foundEmployee.get().getId());
         verify(employeeRepository, times(1)).findById(1);
     }
 
     @Test
-    void testGetEmployeeByEmail() {
-        when(employeeRepository.findByEmail("john.doe@gmail.com")).thenReturn(Optional.of(employee));
+    void testGetEmployeeById_NotFound() {
+        when(employeeRepository.findById(1)).thenReturn(Optional.empty());
 
-        Optional<Employee> foundEmployee = employeeService.getEmployeeByEmail("john.doe@gmail.com");
+        Optional<Employee> foundEmployee = employeeService.getEmployeeById(1);
+
+        assertFalse(foundEmployee.isPresent());
+        verify(employeeRepository, times(1)).findById(1);
+    }
+
+    @Test
+    void testGetEmployeeByEmail_Success() {
+        when(employeeRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(employee));
+
+        Optional<Employee> foundEmployee = employeeService.getEmployeeByEmail("john.doe@example.com");
 
         assertTrue(foundEmployee.isPresent());
-        assertEquals("John Doe", foundEmployee.get().getName());
-        verify(employeeRepository, times(1)).findByEmail("john.doe@gmail.com");
+        assertEquals(employee.getEmail(), foundEmployee.get().getEmail());
+        verify(employeeRepository, times(1)).findByEmail("john.doe@example.com");
+    }
+
+    @Test
+    void testGetEmployeeByEmail_NotFound() {
+        when(employeeRepository.findByEmail("unknown@example.com")).thenReturn(Optional.empty());
+
+        Optional<Employee> foundEmployee = employeeService.getEmployeeByEmail("unknown@example.com");
+
+        assertFalse(foundEmployee.isPresent());
+        verify(employeeRepository, times(1)).findByEmail("unknown@example.com");
     }
 
     @Test
     void testGetAllEmployees() {
-        List<Employee> employees = Arrays.asList(employee, new Employee(2, "Sachin Doe", "Sachin.doe@gmail.com"));
+        List<Employee> employees = List.of(employee, new Employee(2, "Jane Smith", "jane.smith@example.com"));
         when(employeeRepository.findAll()).thenReturn(employees);
 
         List<Employee> allEmployees = employeeService.getAllEmployees();
 
-        assertNotNull(allEmployees);
         assertEquals(2, allEmployees.size());
         verify(employeeRepository, times(1)).findAll();
     }

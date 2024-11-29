@@ -110,6 +110,10 @@
 					<excludes>
 						<exclude>**/generated/*.java</exclude>
 					</excludes>
+					<rulesets>
+						<ruleset>category/java/bestpractices.xml</ruleset>
+						<ruleset>category/java/codestyle.xml</ruleset>
+					</rulesets>
 				</configuration>
 			</plugin>
 		</plugins>

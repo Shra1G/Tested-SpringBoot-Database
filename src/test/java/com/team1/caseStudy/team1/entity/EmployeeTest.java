@@ -28,9 +28,9 @@ public class EmployeeTest {
         Employee employee = new Employee();
 
         // When & Then
-        assertEquals(0, employee.getId());  // Default value for int is 0
-        assertEquals(null, employee.getName());  // Default value for String is null
-        assertEquals(null, employee.getEmail());  // Default value for String is null
+        assertEquals(0, employee.getId());
+        assertEquals(null, employee.getName());
+        assertEquals(null, employee.getEmail());
     }
 
     @Test

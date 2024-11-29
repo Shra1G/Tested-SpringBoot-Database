@@ -1,0 +1,25 @@
+export:
+  file-path : src/main/resources/employees1.csv
+
+import:
+  file-path : src/main/resources/employees.csv
+
+logging:
+  level:
+    org:
+      springframework: debug
+spring:
+  datasource:
+    driverClassName: org.h2.Driver
+    password: 1
+    url: jdbc:h2:mem:testdb
+    username: sa
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
