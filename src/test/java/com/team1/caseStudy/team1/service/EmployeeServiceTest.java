@@ -31,8 +31,8 @@ class EmployeeServiceTest {
     void setUp() {
         employee = new Employee();
         employee.setId(1);
-        employee.setName("John Doe");
-        employee.setEmail("john.doe@example.com");
+        employee.setName("Mohit Nair");
+        employee.setEmail("Mohit.Nair@example.com");
     }
 
     @Test
@@ -71,13 +71,13 @@ class EmployeeServiceTest {
 
     @Test
     void testGetEmployeeByEmail_Success() {
-        when(employeeRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(employee));
+        when(employeeRepository.findByEmail("Mohit.Nair@example.com")).thenReturn(Optional.of(employee));
 
-        Optional<Employee> foundEmployee = employeeService.getEmployeeByEmail("john.doe@example.com");
+        Optional<Employee> foundEmployee = employeeService.getEmployeeByEmail("Mohit.Nair@example.com");
 
         assertTrue(foundEmployee.isPresent());
         assertEquals(employee.getEmail(), foundEmployee.get().getEmail());
-        verify(employeeRepository, times(1)).findByEmail("john.doe@example.com");
+        verify(employeeRepository, times(1)).findByEmail("Mohit.Nair@example.com");
     }
 
     @Test
@@ -92,7 +92,7 @@ class EmployeeServiceTest {
 
     @Test
     void testGetAllEmployees() {
-        List<Employee> employees = List.of(employee, new Employee(2, "Jane Smith", "jane.smith@example.com"));
+        List<Employee> employees = List.of(employee, new Employee(2, "Tom Cruise", "Tom.Cruise@example.com"));
         when(employeeRepository.findAll()).thenReturn(employees);
 
         List<Employee> allEmployees = employeeService.getAllEmployees();

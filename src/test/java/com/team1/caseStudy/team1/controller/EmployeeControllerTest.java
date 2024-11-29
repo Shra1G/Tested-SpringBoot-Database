@@ -245,8 +245,8 @@ public class EmployeeControllerTest {
 
     @Test
     void testUpdateEmployee_Success() {
-        Employee existingEmployee = new Employee(1, "John Doe", "john.doe@example.com");
-        Employee updatedEmployee = new Employee(1, "Jane Doe", "jane.doe@example.com");
+        Employee existingEmployee = new Employee(1, "Mohit Nair", "Mohit.Nair@example.com");
+        Employee updatedEmployee = new Employee(1, "Tom Nair", "Tom.Nair@example.com");
 
         Mockito.when(employeeService.getEmployeeById(1)).thenReturn(Optional.of(existingEmployee));
         Mockito.when(employeeService.saveEmployee(existingEmployee)).thenReturn(updatedEmployee);
@@ -254,8 +254,8 @@ public class EmployeeControllerTest {
         ResponseEntity<Employee> response = employeeController.updateEmployee(1, updatedEmployee);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Jane Doe", response.getBody().getName());
-        assertEquals("jane.doe@example.com", response.getBody().getEmail());
+        assertEquals("Tom Nair", response.getBody().getName());
+        assertEquals("Tom.Nair@example.com", response.getBody().getEmail());
     }
 
     @Test

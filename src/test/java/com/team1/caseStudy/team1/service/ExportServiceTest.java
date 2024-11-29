@@ -37,8 +37,8 @@ class ExportServiceTest {
     @BeforeEach
     void setUp() {
         employees = Arrays.asList(
-                new Employee(1, "John Doe", "john.doe@example.com"),
-                new Employee(2, "Jane Smith", "jane.smith@example.com")
+                new Employee(1, "Mohit Nair", "Mohit.Nair@example.com"),
+                new Employee(2, "Tom Cruise", "Tom.Cruise@example.com")
         );
     }
 
@@ -53,8 +53,8 @@ class ExportServiceTest {
             List<String[]> rows = reader.readAll();
             assertEquals(3, rows.size());
             assertArrayEquals(new String[]{"ID", "Name", "Email"}, rows.get(0));
-            assertArrayEquals(new String[]{"1", "John Doe", "john.doe@example.com"}, rows.get(1));
-            assertArrayEquals(new String[]{"2", "Jane Smith", "jane.smith@example.com"}, rows.get(2));
+            assertArrayEquals(new String[]{"1", "Mohit Nair", "Mohit.Nair@example.com"}, rows.get(1));
+            assertArrayEquals(new String[]{"2", "Tom Cruise", "Tom.Cruise@example.com"}, rows.get(2));
         }
 
         new File(filePath).delete();
