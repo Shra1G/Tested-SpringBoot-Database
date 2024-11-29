@@ -1,10 +1,10 @@
 package com.team1.caseStudy.team1.service;
 
 import com.opencsv.CSVWriter;
+
 import com.team1.caseStudy.team1.entity.Employee;
 import com.team1.caseStudy.team1.repository.EmployeeRepository;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.io.FileWriter;
