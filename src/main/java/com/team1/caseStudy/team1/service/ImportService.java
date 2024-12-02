@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Log4j2
 @AllArgsConstructor
 @ConfigurationProperties(prefix = "import")
-public class ImportService implements CommandLineRunner {
+public class ImportService implements CommandLineRunne {
 
     private final EmployeeService employeeService;
     private final ImportProperties importProperties;
